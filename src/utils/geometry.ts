@@ -113,7 +113,7 @@ export function hitTestEntity(entity: Entity, point: Point, threshold: number): 
       const d = distance(point, entity.center);
       if (Math.abs(d - entity.radius) > threshold) return false;
       let a = Math.atan2(point.y - entity.center.y, point.x - entity.center.x);
-      let start = entity.startAngle;
+      const start = entity.startAngle;
       let end = entity.endAngle;
       while (a < start) a += Math.PI * 2;
       while (end < start) end += Math.PI * 2;

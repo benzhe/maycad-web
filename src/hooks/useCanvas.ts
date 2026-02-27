@@ -147,7 +147,7 @@ export function useCanvas(canvasRef: RefObject<HTMLCanvasElement | null>) {
       const worldStart = screenToWorld(selectionStart.current, pan, zoom);
       state.setSelectionBox({ start: worldStart, end: worldPt });
     }
-  }, [getWorldPoint, getSnappedPoint, canvasRef]);
+  }, [getWorldPoint, getSnappedPoint]);
 
   const handleMouseDown = useCallback((e: MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -306,7 +306,7 @@ export function useCanvas(canvasRef: RefObject<HTMLCanvasElement | null>) {
     }
   }, []);
 
-  const handleDoubleClick = useCallback((_e: MouseEvent<HTMLCanvasElement>) => {
+  const handleDoubleClick = useCallback(() => {
     const state = useCadStore.getState();
     const { activeTool, drawingState } = state;
     if (activeTool === 'line') {

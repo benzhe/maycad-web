@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react';
+import { useRef, useState, useCallback, type ChangeEvent } from 'react';
 import { useCadStore } from '../store/cadStore';
 import { saveDrawing, loadDrawing, exportToSVG } from '../utils/fileUtils';
 import type { DrawingFile } from '../utils/fileUtils';
@@ -8,12 +8,14 @@ export function MenuBar() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const triggerFileOpen = useCallback(() => { fileInputRef.current?.click(); }, []);
+
   const menus = [
     {
       label: 'File',
       items: [
         { label: 'New', shortcut: 'Ctrl+N', action: () => store.newDrawing() },
-        { label: 'Open...', shortcut: 'Ctrl+O', action: () => fileInputRef.current?.click() },
+        { label: 'Open...', shortcut: 'Ctrl+O', action: triggerFileOpen },
         { label: 'Save', shortcut: 'Ctrl+S', action: () => saveDrawing(store.entities, store.layers) },
         { separator: true },
         { label: 'Export SVG', action: () => exportToSVG(store.entities, store.layers) },
@@ -116,6 +118,7 @@ export function MenuBar() {
 
   return (
     <div className="menu-bar" onMouseLeave={() => setOpenMenu(null)}>
+      {/* eslint-disable-next-line react-hooks/refs */}
       {menus.map(menu => (
         <div
           key={menu.label}

@@ -12,6 +12,8 @@ import ConnectorMesh from './ConnectorMesh'
 import { v4 as uuidv4 } from 'uuid'
 import type { Profile, ConnectorInstance, ConnectorType } from '../../types'
 
+const CONNECTOR_SUGGESTION_THRESHOLD_MM = 60
+
 function SceneContent() {
   const {
     profiles, connectors, activeTool, activeProfileType,
@@ -49,7 +51,7 @@ function SceneContent() {
 
       // Check for nearby connectors after adding
       for (const existing of profiles) {
-        const pt = findNearbyEndpoints(existing, newProfile, 60)
+        const pt = findNearbyEndpoints(existing, newProfile, CONNECTOR_SUGGESTION_THRESHOLD_MM)
         if (pt) {
           setConnectorSuggestion({
             profile1Id: existing.instanceId,

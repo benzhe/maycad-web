@@ -2,6 +2,9 @@ import { useCADStore } from '../store/cadStore'
 import { profileLibrary } from '../data/profiles'
 import { mmToUnit, displayToMm } from '../utils/units'
 
+const METRIC_PRECISION = 1   // decimal places for mm display
+const IMPERIAL_PRECISION = 3 // decimal places for inch display
+
 export default function PropertiesPanel() {
   const { profiles, selectedIds, updateProfile, removeProfile, units } = useCADStore()
 
@@ -79,7 +82,7 @@ export default function PropertiesPanel() {
         <label className="text-xs text-gray-500 block mb-1">Length ({units === 'metric' ? 'mm' : 'in'})</label>
         <input
           type="number"
-          value={lengthInUnits.toFixed(units === 'metric' ? 1 : 3)}
+          value={lengthInUnits.toFixed(units === 'metric' ? METRIC_PRECISION : IMPERIAL_PRECISION)}
           onChange={e => updateProfile(profile.instanceId, { length: displayToMm(parseFloat(e.target.value) || 0, units) })}
           className="w-full px-2 py-1 rounded text-xs"
           style={{ background: '#0f3460', border: '1px solid #1a3a6e', color: '#e0e0e0', outline: 'none' }}

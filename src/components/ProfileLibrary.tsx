@@ -3,6 +3,12 @@ import { useCADStore } from '../store/cadStore'
 import { profileLibrary, profileCategories } from '../data/profiles'
 import type { ProfileType } from '../types'
 
+// Preview dimensions for profile cross-section thumbnails
+const MIN_PREVIEW_SIZE = 8   // px minimum
+const MAX_PREVIEW_SIZE = 24  // px maximum
+// Scale factor: 1mm ÷ 5 → ~1px for visual balance in 8–24px range
+const PREVIEW_SCALE_FACTOR = 5
+
 export default function ProfileLibrary() {
   const { activeProfileType, setActiveProfileType, setActiveTool } = useCADStore()
   const [search, setSearch] = useState('')
@@ -62,8 +68,8 @@ export default function ProfileLibrary() {
             {/* Profile cross-section preview */}
             <div className="flex-shrink-0" style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{
-                width: Math.max(8, Math.min(24, p.width / 5)),
-                height: Math.max(8, Math.min(24, p.height / 5)),
+                width: Math.max(MIN_PREVIEW_SIZE, Math.min(MAX_PREVIEW_SIZE, p.width / PREVIEW_SCALE_FACTOR)),
+                height: Math.max(MIN_PREVIEW_SIZE, Math.min(MAX_PREVIEW_SIZE, p.height / PREVIEW_SCALE_FACTOR)),
                 background: '#a0a0b0',
                 border: '1px solid #808090',
               }} />

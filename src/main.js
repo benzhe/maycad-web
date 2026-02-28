@@ -237,7 +237,7 @@ function removeSelectable(mesh) {
   const idx = state.selectable.indexOf(mesh)
   if (idx >= 0) state.selectable.splice(idx, 1)
   scene.remove(mesh)
-  clearSelection([mesh])
+  clearSelection()
 }
 
 function createProfile({ series = '20', start, end }) {
@@ -287,9 +287,8 @@ function select(mesh, additive = false) {
   updatePropertyPanel()
 }
 
-function clearSelection(except = []) {
+function clearSelection() {
   state.selected = state.selected.filter((mesh) => {
-    if (except.includes(mesh)) return false
     if (mesh.material?.emissive) mesh.material.emissive.setHex(mesh.userData.prevEmissive ?? 0)
     return false
   })
@@ -320,22 +319,34 @@ function updatePropertyPanel() {
 function applyProperties() {
   const first = state.selected[0]
   if (!first) return
+  const prevPosition = first.position.clone()
+  const prevRotationY = first.rotation.y
+  const prevLengthMm = first.userData.lengthMm
   const nx = Number(document.getElementById('prop-x').value) * MM
   const ny = Number(document.getElementById('prop-y').value) * MM
   const nz = Number(document.getElementById('prop-z').value) * MM
   const nry = THREE.MathUtils.degToRad(Number(document.getElementById('prop-ry').value || 0))
   const lengthMm = Number(document.getElementById('prop-length').value)
+  const applyLength = (targetLengthMm) => {
+    first.userData.lengthMm = Math.round(targetLengthMm)
+    first.geometry.dispose()
+    first.geometry = new THREE.BoxGeometry(targetLengthMm * MM, first.userData.baseSizeMm * MM, first.userData.baseSizeMm * MM)
+  }
   executeCommand({
     do: () => {
       first.position.set(nx, ny, nz)
       first.rotation.y = nry
       if (first.userData.kind === 'profile' && Number.isFinite(lengthMm) && lengthMm > 0) {
-        first.userData.lengthMm = Math.round(lengthMm)
-        first.geometry.dispose()
-        first.geometry = new THREE.BoxGeometry(lengthMm * MM, first.userData.baseSizeMm * MM, first.userData.baseSizeMm * MM)
+        applyLength(lengthMm)
       }
     },
-    undo: () => {},
+    undo: () => {
+      first.position.copy(prevPosition)
+      first.rotation.y = prevRotationY
+      if (first.userData.kind === 'profile' && Number.isFinite(prevLengthMm) && prevLengthMm > 0) {
+        applyLength(prevLengthMm)
+      }
+    },
   })
 }
 
